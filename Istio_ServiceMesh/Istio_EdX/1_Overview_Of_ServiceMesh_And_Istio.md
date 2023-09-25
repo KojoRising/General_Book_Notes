@@ -79,7 +79,7 @@
 - K8s API-Server - Could be leveraged to automate service discovery & communicate locations of servicew endpoints directly to each proxy
 
 
-### 5 Istio Architecture
+### [5 Istio Architecture](https://learning.edx.org/course/course-v1:LinuxFoundationX+LFS144x+3T2022/block-v1:LinuxFoundationX+LFS144x+3T2022+type@sequential+block@2f7c82543cee4a80bf1952bb1a1cba51/block-v1:LinuxFoundationX+LFS144x+3T2022+type@vertical+block@84321a2e1aaf49b38243e6ab18e4100f)
 
 **Istio Basic Idea** 
 - Push microservices concerns into infrastructure by leveraging Kubernetes
@@ -91,9 +91,54 @@
 - Assigning each workload a cryptographic identity as the basis for a more secure computing environment.
 - Configuring the proxies with all the information they need to handle incoming and outgoing traffic.
 
-### 6 Sidecar Injection
-### 7 
-### 8 
+### [6 Sidecar Injection](https://learning.edx.org/course/course-v1:LinuxFoundationX+LFS144x+3T2022/block-v1:LinuxFoundationX+LFS144x+3T2022+type@sequential+block@2f7c82543cee4a80bf1952bb1a1cba51/block-v1:LinuxFoundationX+LFS144x+3T2022+type@vertical+block@8605c79b427c4a0fb5bad20c47aa377c)
+
+- **Bad Approach** - Manually modifying K8s manifests to bundle proxies as sidecars
+- **Good Approach** - Automatically modifying K8s manifests to include sidecars with each pod. 2 Ways:
+  - Manual Sidecar Injection
+  - Automatic Sidecar Injection
+  
+#### Manual Sidecar Injection
+1) How is Manual Sidecar Injection performed?
+- `istioctl's kube-inject` subcommand automatically modifies og manifest - To include new sidecar
+- Manual Sidecar Injection - `Process of altering manifests is explicit`
+
+2) How is Automatic Sidecar Injection performed?
+- `K8s Mutating Admission Webhook` - Intercepts + modifies og manifest w/ new sidecar
+- Automatic Sidecar Injection - `Bundling of sidecar is made transparent to user`
+
+3) How can you trigger the webhook? (Under Automatic Sidecar Injection) 
+- Apply `istio-injection=enabled` to any K8s Namespace (will automatically modify any pod/deployment resources to include the sidecar)
+
+### [7 Routing Application Traffic Through the Sidecar](https://learning.edx.org/course/course-v1:LinuxFoundationX+LFS144x+3T2022/block-v1:LinuxFoundationX+LFS144x+3T2022+type@sequential+block@2f7c82543cee4a80bf1952bb1a1cba51/block-v1:LinuxFoundationX+LFS144x+3T2022+type@vertical+block@0fd4cf7c976544c192ca8adac7df6d06)
+Next problem is ensuring proxy transparently captures traffic 
+- **Outbound Traffic** - Should be diverted from original destination to proxy
+- **Inbound Traffic** - Should arrive at proxy before application has a chance to handle incoming request
+
+1) What components are injected as part of the sidecar injection process [2]? Purpose of each (high-level)? 
+- Envoy Sidecar -  
+- Kubernetes Init Container - Applies "iptables" rules before Pod containers are started 
+
+2) What mechanisms are available for configuring a Pod to allow Envoy to intercept requests [2]?
+- iptables rules. See [Life of a Packet through Istio](https://www.youtube.com/watch?v=oZrZlx2fmcM)
+- [k8s CNI Plugin](https://istio.io/latest/docs/setup/additional-setup/cni/)
+
+### [8 Assigning Workloads an Identity](https://learning.edx.org/course/course-v1:LinuxFoundationX+LFS144x+3T2022/block-v1:LinuxFoundationX+LFS144x+3T2022+type@sequential+block@2f7c82543cee4a80bf1952bb1a1cba51/block-v1:LinuxFoundationX+LFS144x+3T2022+type@vertical+block@2b1112251f3c4551adacc70d4a213dad)
+
+
+1) What is each workload in Istio assigned? What ID is encoded into each service's certificate, and what form does it take
+- X.509 Cryptographic Identity that adheres to SPIFFE 
+- SPIFFEE ID is encoded. Format is "spiffe://<trust-domain>/<workload-identifier>"
+
+2Q) Regarding the SPIFFE ID/URL, how are the following derived?
+> a) trust-domain
+> b) workload-identifier
+
+2A)   
+> a) From K8s' cluster-domain 
+> b) service's namespace + service-account.
+
+
 ### 9 
 ### 10 
 ### 11 
