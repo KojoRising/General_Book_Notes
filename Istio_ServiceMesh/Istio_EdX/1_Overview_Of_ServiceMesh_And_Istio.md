@@ -125,7 +125,6 @@ Next problem is ensuring proxy transparently captures traffic
 
 ### [8 Assigning Workloads an Identity](https://learning.edx.org/course/course-v1:LinuxFoundationX+LFS144x+3T2022/block-v1:LinuxFoundationX+LFS144x+3T2022+type@sequential+block@2f7c82543cee4a80bf1952bb1a1cba51/block-v1:LinuxFoundationX+LFS144x+3T2022+type@vertical+block@2b1112251f3c4551adacc70d4a213dad)
 
-
 1) What is each workload in Istio assigned? What ID is encoded into each service's certificate, and what form does it take
 - X.509 Cryptographic Identity that adheres to SPIFFE 
 - SPIFFEE ID is encoded. Format is "spiffe://<trust-domain>/<workload-identifier>"
@@ -138,19 +137,66 @@ Next problem is ensuring proxy transparently captures traffic
 > a) From K8s' cluster-domain 
 > b) service's namespace + service-account.
 
+### [9 Configuring Envoy](https://learning.edx.org/course/course-v1:LinuxFoundationX+LFS144x+3T2022/block-v1:LinuxFoundationX+LFS144x+3T2022+type@sequential+block@2f7c82543cee4a80bf1952bb1a1cba51/block-v1:LinuxFoundationX+LFS144x+3T2022+type@vertical+block@a613ee3163564ec99cdaf4e6dad47198)
 
-### 9 
-### 10 
-### 11 
-### 12 
-### 13 
-### 14 
-### 15 
-### 16 
-### 17 
-### 18 
-### 19 
-### 20 
+Potential Scenarios:
+1) Deployment is autoscaled from 2->3 replicas
+- Info about newly-created service endpoint -> Must be communicated to all sidecars in the mesh
+
+#### Questions
+1) What entity configures the sidecar proxies w/ all info required to handle incoming/outgoing traffic?
+2) Is the Istio Controlplane in the path of live requests/responses between services? If not, what is?
+3) What is "xDS", and why is it required? 
+4) For "xDS", which entities are the following? 
+> a) Sender
+> b) Receiver
+  
+#### Answers
+1) Istio Controlplane
+2) No. Envoy is in the path
+3) xDS is Envoy's discovery API. Allows Envoy to receive config updates via API & reload its configuration "live" (without restart) 
+4)
+> a) Istio Controlplane
+> b) Envoy
+
+### [10 Envoy at the Edge](https://learning.edx.org/course/course-v1:LinuxFoundationX+LFS144x+3T2022/block-v1:LinuxFoundationX+LFS144x+3T2022+type@sequential+block@2f7c82543cee4a80bf1952bb1a1cba51/block-v1:LinuxFoundationX+LFS144x+3T2022+type@vertical+block@f3771674954048d687b622039edf2f0b)
+### 11 [Sidecar Injection Demo](https://learning.edx.org/course/course-v1:LinuxFoundationX+LFS144x+3T2022/block-v1:LinuxFoundationX+LFS144x+3T2022+type@sequential+block@2f7c82543cee4a80bf1952bb1a1cba51/block-v1:LinuxFoundationX+LFS144x+3T2022+type@vertical+block@32bec447f8ea4e8680f49ddeadf8ebe2)
+
+![10.1_istio_architecture_overview.png](10.1_istio_architecture_overview.png)
+![11.1_Istio_IpTables_Demo_Cmd.png](11.1_Istio_IpTables_Demo_Cmd.png)
+
+#### Questions
+1) What is the purpose of Istio Gateway? What components make it up [2]?
+2) How can you check if envoy sidecars are present/successfully injected (ie. w/ curl)?
+3) 
+4) 
+5) 
+
+#### Answers
+1) For traffic "outside" of mesh (ie. external traffic).
+> a) Istio Ingress Gateway
+> b) Istio Egress Gateway
+2) `server: envoy` header should be present
+
+### Summary/Objectives
+
+Upon completing this chapter, you should be able to explain:
+- What problems stemmed from the shift to cloud-native applications.
+- How these problems were mitigated before service meshes existed.
+- How service meshes address these problems.
+- The design and architecture of Istio.
 
 
+#### Questions
+1)
+2)
+3)
+4)
+5)
 
+#### Answers
+1) 
+2) 
+3)
+4)
+5)
